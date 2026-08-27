@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Utkio — Real-time English Speaking Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#090D1A;
+    --ink-light:#334155;
+    --ink-muted:#64748B;
+    --indigo:#2A2C68;
+    --indigo-deep:#111338;
+    --teal:#0D9488;
+    --teal-glow:#14B8A6;
+    --coral:#FF5B35;
+    --coral-hover:#E64A24;
+    --coral-soft:rgba(255, 91, 53, 0.08);
+    --cream:#FAF8F5;
+    --cream-surface:#F3EFEA;
+    --card:#FFFFFF;
+    --line: rgba(9, 13, 26, 0.08);
+    --shadow-card: 0 10px 30px -8px rgba(9, 13, 26, 0.08);
+    --shadow-hover: 0 20px 48px -12px rgba(9, 13, 26, 0.14);
+    --shadow-float: 0 30px 70px -15px rgba(17, 19, 56, 0.22);
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:700; letter-spacing:-0.025em; }
+  img{max-width:100%; height:auto; display:block;}
+  a{ text-decoration:none; color:inherit; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; width:100%; }
+  section{ padding:100px 0; position:relative; }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--coral); background:var(--coral-soft);
+    padding:6px 14px; border-radius:100px; margin-bottom:18px;
+    border:1px solid rgba(255, 91, 53, 0.18);
+  }
+  .badge-dot{ width:6px; height:6px; border-radius:50%; background:var(--coral); }
+
+  .premium-frame{
+    background:#FFFFFF; padding:12px; border-radius:28px; border:1px solid var(--line);
+    box-shadow:var(--shadow-card); position:relative; width:100%;
+    transition:transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-frame:hover{ transform:translateY(-3px); box-shadow:var(--shadow-hover); }
+  .premium-frame img{ border-radius:20px; width:100%; height:auto; display:block; }
+
+  nav{
+    position:sticky; top:0; z-index:100;
+    background:rgba(250, 248, 245, 0.88); backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; }
+  .logo{ display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:700; font-size:22px; color:var(--ink); }
+  .nav-btn{
+    background:var(--ink); color:#fff; padding:10px 22px; border-radius:100px;
+    font-weight:700; font-size:14px; transition:all .25s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .nav-btn:hover{ background:var(--coral); }
+
+  .hero{ padding:80px 0 60px; }
+  .hero .wrap{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:center; }
+  .hero h1{ font-size:clamp(36px, 4.2vw, 54px); line-height:1.12; margin-bottom:20px; color:var(--ink); }
+  .hero h1 .highlight{ color:var(--coral); font-style:italic; }
+  .hero p.lead{ font-size:clamp(16px, 1.4vw, 19px); color:var(--ink-light); max-width:490px; margin-bottom:32px; line-height:1.6; }
+  
+  .hero-actions{ display:flex; flex-direction:column; gap:16px; align-items:flex-start; width:100%; }
+  .btn-download{
+    background:var(--coral); color:#fff; padding:17px 34px; border-radius:100px;
+    font-weight:700; font-size:16px; display:inline-flex; align-items:center; justify-content:center; gap:12px;
+    box-shadow:0 16px 36px -8px rgba(255, 91, 53, 0.48);
+    transition:all .25s ease; text-align:center; min-height:54px;
+  }
+  .btn-download:hover{ background:var(--coral-hover); transform:translateY(-2px); }
+  .download-meta{ font-size:13.5px; color:var(--ink-muted); display:flex; align-items:center; gap:12px; font-weight:500; flex-wrap:wrap; }
+  .download-meta span.dot{ width:4px; height:4px; border-radius:50%; background:rgba(9, 13, 26, 0.25); }
+
+  .hero-trust{ display:flex; align-items:center; gap:10px; font-size:14px; color:var(--ink-light); margin-top:4px; }
+  .trust-avatar{
+    width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--indigo), var(--teal));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; flex-shrink:0;
+  }
+
+  .floating-pill{
+    position:absolute; z-index:2; background:rgba(255,255,255,0.96); backdrop-filter:blur(10px);
+    padding:10px 16px; border-radius:14px; box-shadow:0 12px 28px rgba(9, 13, 26, 0.12);
+    display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700;
+    border:1px solid rgba(9, 13, 26, 0.08); color:var(--ink);
+  }
+  .floating-pill.top{ top:-12px; left:-12px; }
+  .floating-pill.bottom{ bottom:-12px; right:-12px; }
+  .pulse-green{ width:8px; height:8px; border-radius:50%; background:#10B981; box-shadow:0 0 10px #10B981; }
+
+  .pillars{ padding:20px 0 60px; }
+  .pillars-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; }
+  .pillar-card{
+    background:var(--card); border-radius:24px; padding:32px 26px;
+    border:1px solid var(--line); box-shadow:var(--shadow-card);
+    transition:transform 0.25s ease;
+  }
+  .pillar-card:hover{ transform:translateY(-3px); }
+  .pillar-icon{ font-size:32px; margin-bottom:14px; display:inline-block; }
+  .pillar-card h3{ font-size:20px; margin-bottom:10px; color:var(--ink); }
+  .pillar-card p{ font-size:14.5px; color:var(--ink-light); line-height:1.6; }
+
+  .carousel-wrapper{ position:relative; width:100%; }
+  .swipe-track{
+    display:flex; gap:26px; overflow-x:auto; scroll-snap-type:x mandatory;
+    scroll-behavior:smooth; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    padding:16px 4px 28px;
+  }
+  .swipe-track::-webkit-scrollbar{ display:none; }
+  
+  @media(min-width:960px){
+    .swipe-track{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); overflow-x:visible; scroll-snap-type:none; gap:26px; }
+    .carousel-controls{ display:none !important; }
+  }
+
+  .swipe-item{ flex:0 0 280px; scroll-snap-align:center; scroll-snap-stop:always; }
+  .carousel-controls{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:8px; }
+  .carousel-btn{
+    width:40px; height:40px; border-radius:50%; background:var(--card); border:1px solid var(--line);
+    color:var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .carousel-btn:hover{ background:var(--coral); color:#fff; }
+  .carousel-dots{ display:flex; align-items:center; gap:8px; }
+  .carousel-dot{ width:8px; height:8px; border-radius:50%; background:rgba(9, 13, 26, 0.2); transition:all 0.25s ease; cursor:pointer; }
+  .carousel-dot.active{ width:24px; border-radius:100px; background:var(--coral); }
+
+  .reels{ background:var(--cream-surface); padding:90px 0; }
+  .reels-head{ text-align:center; max-width:620px; margin:0 auto 36px; }
+  .reels-head h2{ font-size:clamp(30px, 3.5vw, 42px); margin-bottom:8px; }
+  .reel-card{
+    background:#FFFFFF; border-radius:26px; padding:14px; box-shadow:var(--shadow-card);
+    border:1px solid var(--line); height:100%; display:flex; flex-direction:column;
+  }
+  .reel-video-frame{ border-radius:18px; overflow:hidden; aspect-ratio:9/16; background:var(--indigo-deep); position:relative; cursor:pointer; }
+  .reel-video-frame img{ width:100%; height:100%; object-fit:cover; border-radius:18px; }
+  .reel-play-overlay{ position:absolute; inset:0; background:rgba(9, 13, 26, 0.22); display:flex; align-items:center; justify-content:center; }
+  .reel-play-badge{
+    width:54px; height:54px; border-radius:50%; background:rgba(255,255,255,0.94);
+    backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3); transition:transform 0.2s ease;
+  }
+  .reel-video-frame:hover .reel-play-badge{ transform:scale(1.1); }
+  .reel-play-badge svg{ width:22px; height:22px; fill:var(--coral); margin-left:3px; }
+  .reel-label{ display:flex; align-items:center; gap:10px; margin-top:14px; font-weight:700; font-size:14px; color:var(--ink); padding:0 4px; }
+  .reel-tag{
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:rgba(255, 91, 53, 0.12); color:var(--coral); font-size:12.5px; font-weight:800; flex-shrink:0;
+  }
+
+  .problem{ padding:95px 0; }
+  .problem .wrap{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  .problem h2{ font-size:clamp(30px, 3.5vw, 42px); margin-bottom:16px; line-height:1.16; }
+  .problem p.lead{ color:var(--ink-light); font-size:17px; margin-bottom:28px; }
+  .pain-points{ display:flex; flex-direction:column; gap:16px; }
+  .pain-item{ display:flex; gap:16px; align-items:flex-start; background:var(--card); padding:20px 22px; border-radius:20px; border:1px solid var(--line); box-shadow:var(--shadow-card); }
+  .pain-icon{ flex-shrink:0; width:36px; height:36px; border-radius:50%; background:rgba(255, 91, 53, 0.12); color:var(--coral); display:flex; align-items:center; justify-content:center; font-size:16px; margin-top:2px; }
+  .pain-item h4{ font-size:16.5px; font-weight:700; margin-bottom:4px; color:var(--ink); }
+  .pain-item p{ font-size:14px; color:var(--ink-light); line-height:1.55; }
+
+  .scenario-section{ background:linear-gradient(150deg, var(--indigo-deep), #090D1A); color:#fff; border-radius:36px; margin:0 24px; padding:80px 0; }
+  .scenario-section .wrap{ padding:0 36px; }
+  .scenario-head{ max-width:680px; margin-bottom:40px; }
+  .scenario-head .badge{ background:rgba(20, 184, 166, 0.15); color:var(--teal-glow); border-color:rgba(20, 184, 166, 0.3); }
+  .scenario-head .badge-dot{ background:var(--teal-glow); }
+  .scenario-head h2{ color:#fff; font-size:clamp(30px, 3.5vw, 44px); margin-bottom:14px; }
+  .scenario-head p.lead{ color:rgba(255,255,255,0.82); font-size:17.5px; line-height:1.6; }
+  .scenario-frame-wrap{ margin-bottom:48px; max-width:840px; margin-left:auto; margin-right:auto; }
+
+  .video-showcase-box{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); border-radius:28px; padding:34px 28px; text-align:center; max-width:840px; margin:0 auto; }
+  .video-showcase-box.light{ background:var(--indigo-deep); color:#fff; box-shadow:var(--shadow-float); }
+  .video-showcase-box h3{ font-size:clamp(20px, 2.5vw, 24px); margin-bottom:8px; color:#fff; }
+  .video-showcase-box p{ font-size:14.5px; color:rgba(255,255,255,0.74); margin-bottom:22px; }
+  .video-embed-box{ position:relative; aspect-ratio:16/9; background:#070A12; border-radius:18px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.12); width:100%; }
+  .play-trigger{ width:68px; height:68px; border-radius:50%; background:var(--coral); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 12px 28px rgba(255, 91, 53, 0.5); transition:transform 0.2s ease; }
+  .play-trigger:hover{ transform:scale(1.08); }
+  .play-trigger svg{ width:28px; height:28px; fill:#fff; margin-left:3px; }
+
+  .install-guide{ background:var(--cream-surface); padding:90px 0; border-radius:36px; margin:40px 24px 0; }
+  .install-head{ text-align:center; max-width:640px; margin:0 auto 28px; }
+  .install-head h2{ font-size:clamp(30px, 3.5vw, 42px); margin-bottom:8px; }
+  .install-head p{ color:var(--ink-light); font-size:16px; }
+
+  .install-card-visual{ background:#FFFFFF; border-radius:26px; padding:16px; border:1px solid var(--line); box-shadow:var(--shadow-card); height:100%; display:flex; flex-direction:column; }
+  .install-screen-frame{ border-radius:18px; overflow:hidden; aspect-ratio:9/14; background:var(--indigo-deep); position:relative; margin-bottom:14px; border:1px solid var(--line); }
+  .install-screen-frame img{ width:100%; height:100%; object-fit:cover; }
+  .install-card-meta{ padding:2px 4px; display:flex; flex-direction:column; gap:6px; }
+  .install-step-header{ display:flex; align-items:center; gap:10px; }
+  .install-step-tag{ width:28px; height:28px; border-radius:50%; background:var(--coral); color:#fff; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .install-card-meta h3{ font-size:17px; color:var(--ink); font-weight:700; }
+  .install-card-meta p{ font-size:13.5px; color:var(--ink-light); line-height:1.5; }
+  .install-safe-pill{ margin-top:8px; padding:6px 10px; border-radius:8px; font-size:12px; font-weight:600; background:rgba(13, 148, 136, 0.08); color:var(--teal); border-left:3px solid var(--teal); }
+
+  .faq{ padding:90px 0; }
+  .faq-head{ text-align:center; max-width:600px; margin:0 auto 40px; }
+  .faq-head h2{ font-size:clamp(30px, 3.5vw, 42px); }
+  .faq-accordion{ max-width:800px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+  .faq-box{ background:var(--card); border-radius:20px; padding:24px 28px; border:1px solid var(--line); box-shadow:var(--shadow-card); }
+  .faq-box h4{ font-size:17px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .faq-box p{ font-size:14.5px; color:var(--ink-light); line-height:1.6; }
+
+  .final-cta{ text-align:center; padding:90px 0 110px; }
+  .final-cta .wrap{ display:flex; flex-direction:column; align-items:center; }
+  .final-cta-img-wrap{ max-width:320px; margin-bottom:18px; width:100%; }
+  .final-cta h2{ font-size:clamp(32px, 4vw, 46px); max-width:620px; margin-bottom:14px; }
+  .final-cta p{ color:var(--ink-light); font-size:17.5px; margin-bottom:30px; max-width:480px; }
+
+  footer{ border-top:1px solid var(--line); padding:40px 0; font-size:14px; color:var(--ink-muted); background:var(--cream-surface); }
+  .footer-wrap{ max-width:1180px; margin:0 auto; padding:0 28px; display:flex; flex-direction:column; gap:22px; }
+  .footer-links{ display:flex; gap:22px; flex-wrap:wrap; font-weight:600; color:var(--ink-light); font-size:14px; }
+  .footer-links a:hover{ color:var(--coral); }
+  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-size:13px; border-top:1px solid var(--line); padding-top:20px; }
+
+  @media(max-width:880px){
+    .wrap{ padding:0 20px; }
+    section{ padding:50px 0; }
+    nav .wrap{ padding:14px 20px; }
+    .hero{ padding:40px 0 30px; }
+    .hero .wrap{ grid-template-columns:1fr; gap:36px; }
+    .hero-actions{ align-items:stretch; }
+    .btn-download{ width:100%; font-size:15.5px; padding:15px 20px; }
+    .floating-pill.top{ display:none; }
+    .floating-pill.bottom{ margin-top:10px; }
+    .pillars-grid{ grid-template-columns:1fr; gap:16px; }
+    .swipe-item{ flex:0 0 260px; }
+    .problem .wrap{ grid-template-columns:1fr; gap:32px; }
+    .problem-visual{ order:-1; }
+    .scenario-section{ margin:0 10px; border-radius:24px; padding:45px 0; }
+    .scenario-section .wrap{ padding:0 18px; }
+    .install-guide{ margin:20px 10px 0; border-radius:24px; padding:45px 0; }
+    .final-cta-img-wrap{ max-width:250px; }
+    .final-cta .btn-download{ width:100%; }
+    .footer-bottom{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">
+      <img src="images/logo.png" alt="Utkio logo" style="width:28px;height:28px;object-fit:contain;">
+      <span>Utkio</span>
+    </div>
+    <a href="utkio.apk" download class="nav-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download APK
+    </a>
+  </div>
+</nav>
+
+<section class="hero" id="download-app">
+  <div class="wrap">
+    <div class="hero-content">
+      <div class="badge"><span class="badge-dot"></span> Real-time AI Speaking Partner</div>
+      <h1>You understand English.<br>Why do you still <span class="highlight">hesitate</span> when speaking?</h1>
+      <p class="lead">Practice speaking English daily with AI in real time. No fear, no human judgment, and instant feedback explained in simple Hindi.</p>
+      
+      <div class="hero-actions">
+        <a href="utkio.apk" download class="btn-download">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Android App (Free APK)
+        </a>
+        <div class="download-meta">
+          <span>✓ 100% Free to Start</span>
+          <span class="dot"></span>
+          <span>✓ Safe Verified APK</span>
+          <span class="dot"></span>
+          <span>✓ Android 8.0+</span>
+        </div>
+        <div class="hero-trust">
+          <span class="trust-avatar">U</span>
+          <span>Built by a solo founder who uses it daily.</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="hero-visual">
+      <div class="premium-frame">
+        <div class="floating-pill top"><span class="pulse-green"></span> Real-Time Voice Call</div>
+        <img src="images/hero.webp" alt="Confident English speaking practice with Utkio">
+        <div class="floating-pill bottom"><span class="pulse-green"></span> Feedback in Simple Hindi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pillars">
+  <div class="wrap">
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon">⏱️</div>
+        <h3>Just 10 Minutes a Day</h3>
+        <p>No long boring lectures. Practice real speaking for just 10 minutes every day to build genuine fluency and confidence.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">📊</div>
+        <h3>Instant Mistake Report</h3>
+        <p>After every call, see your grammar mistakes, filler words ("um", "like"), and better word choices explained simply in Hindi.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🔒</div>
+        <h3>Zero Judgment Space</h3>
+        <p>Shy to speak in front of friends or colleagues? Utkio is your safe private space. Make 100 mistakes without feeling awkward.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reels">
+  <div class="wrap">
+    <div class="reels-head">
+      <div class="badge">Quick Demo</div>
+      <h2>See How It Works</h2>
+    </div>
+    
+    <div class="carousel-wrapper">
+      <div class="swipe-track" id="reelsTrack"></div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="reelsPrevBtn" aria-label="Previous">←</button>
+        <div class="carousel-dots" id="reelsDots"></div>
+        <button class="carousel-btn" id="reelsNextBtn" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div class="problem-content">
+      <div class="badge">Sounds Familiar?</div>
+      <h2>You understand English.<br>Why do you get stuck?</h2>
+      <p class="lead">Understanding English is easy. Speaking it out loud needs daily practice. If you face any of these, Utkio will help you:</p>
+      
+      <div class="pain-points">
+        <div class="pain-item">
+          <div class="pain-icon">🎬</div>
+          <div>
+            <h4>Understand videos easily, but struggle to speak</h4>
+            <p>You watch YouTube videos, podcasts, and movies easily, but find it hard to form sentences when talking to someone.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">💼</div>
+          <div>
+            <h4>Freezing in interviews & meetings</h4>
+            <p>In your mind, everything is clear. But during a job interview, team call, or presentation, words get stuck.</p>
+          </div>
+        </div>
+        <div class="pain-item">
+          <div class="pain-icon">🧠</div>
+          <div>
+            <h4>Thinking and translating in your head</h4>
+            <p>You translate from Hindi to English before speaking, and by the time you are ready, the moment has passed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="problem-visual">
+      <div class="premium-frame">
+        <img src="images/problem.webp" alt="English speaking hesitation">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scenario-section">
+  <div class="wrap">
+    <div class="scenario-head">
+      <div class="badge">Signature Feature</div>
+      <h2>Real-World Practice Scenarios</h2>
+      <p class="lead">Practice realistic situations — job interviews, client meetings, coffee shops, or asking for directions. Speak English for 3 minutes with an AI persona, and then get instant spoken feedback with every mistake explained in simple Hindi.</p>
+    </div>
+    
+    <div class="scenario-frame-wrap">
+      <div class="premium-frame">
+        <img src="images/scenario.webp" alt="Utkio scenario simulation mode">
+      </div>
+    </div>
+
+    <div class="video-showcase-box">
+      <h3>📹 Watch Scenario Practice in Action</h3>
+      <p>See how 3 minutes of roleplay turns into clear feedback:</p>
+      <div class="video-embed-box">
+        <div class="play-trigger" onclick="alert('Scenario video will play here!')">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="install-guide" id="install-guide">
+  <div class="wrap">
+    <div class="install-head">
+      <div class="badge">Quick Setup</div>
+      <h2>How to Install the App</h2>
+      <p>Follow these quick visual steps to install on your Android phone:</p>
+    </div>
+
+    <div class="carousel-wrapper">
+      <div class="swipe-track" id="installStepsTrack"></div>
+      <div class="carousel-controls" style="margin-bottom:44px;">
+        <button class="carousel-btn" id="stepsPrevBtn" aria-label="Previous">←</button>
+        <div class="carousel-dots" id="stepsDots"></div>
+        <button class="carousel-btn" id="stepsNextBtn" aria-label="Next">→</button>
+      </div>
+    </div>
+
+    <div class="video-showcase-box light">
+      <h3>📹 30-Second App Setup Video</h3>
+      <p>Watch how easy it is to install the APK and open the app:</p>
+      <div class="video-embed-box">
+        <div class="play-trigger" onclick="alert('Setup video will play here!')">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <div class="faq-head">
+      <div class="badge">Questions?</div>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-accordion">
+      <div class="faq-box">
+        <h4>Q: Is this app safe for my Android phone?</h4>
+        <p>Yes, 100% safe. The app only asks for Microphone permission so you can speak during practice. We never access your photos, contacts, or personal files.</p>
+      </div>
+      <div class="faq-box">
+        <h4>Q: Why does my browser show "File might be harmful"?</h4>
+        <p>Whenever you download an Android app directly from a website instead of Play Store, Android shows this default message. You can safely click "Download anyway".</p>
+      </div>
+      <div class="faq-box">
+        <h4>Q: Is it free to use?</h4>
+        <p>Yes, you can download the app and start practicing immediately for free. No credit card required.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-cta-img-wrap">
+      <div class="premium-frame"><img src="images/final-cta.webp" alt="Start speaking English with Utkio"></div>
+    </div>
+    <h2>Stop hesitating.<br>Start speaking English today.</h2>
+    <p>Your first real-time conversation is waiting. Free to start.</p>
+    <a href="utkio.apk" download class="btn-download">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Android App (Free APK)
+    </a>
+  </div>
+</section>
+
+
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="pricing.html">Pricing & Plans</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms.html">Terms & Conditions</a>
+      <a href="refund-policy.html">Cancellation & Refund Policy</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Utkio. Built with care for spoken English fluency.</div>
+      <div>All rights reserved. Direct Android Application.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const REELS_DATA = [
+    { id: 1, tag: '1', title: 'Real-time voice practice', poster: "images/reel1.webp", videoSrc: "videos/reel1.mp4" },
+    { id: 2, tag: '2', title: '3-Minute realistic scenario', poster: "images/reel2.webp", videoSrc: "videos/reel2.mp4" },
+    { id: 3, tag: '3', title: 'Instant mistake feedback', poster: "images/reel3.webp", videoSrc: "videos/reel3.mp4" }
+  ];
+
+  const INSTALL_STEPS_DATA = [
+    { step: '1', title: 'Download App', desc: 'Click the Download button to start downloading the APK file.', imgSrc: "images/step1.webp", note: '' },
+    { step: '2', title: 'Tap "Download anyway"', desc: 'If Chrome shows "File might be harmful", tap Download anyway.', imgSrc: "images/step2.webp", note: '🔒 100% Safe & Virus-Free' },
+    { step: '3', title: 'Install & Open', desc: 'Open the downloaded file and tap Install to start speaking.', imgSrc: "images/step3.webp", note: '' }
+  ];
+
+  function initSwipeCarousel(trackId, dotsId, prevBtnId, nextBtnId, renderItemFn, dataList) {
+    const track = document.getElementById(trackId);
+    const dotsContainer = document.getElementById(dotsId);
+    const prevBtn = document.getElementById(prevBtnId);
+    const nextBtn = document.getElementById(nextBtnId);
+    if (!track || !dataList.length) return;
+
+    track.innerHTML = dataList.map((item, index) => renderItemFn(item, index)).join('');
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = dataList.map((_, i) => `<span class="carousel-dot ${i === 0 ? 'active' : ''}" data-idx="${i}"></span>`).join('');
+    }
+
+    const items = track.querySelectorAll('.swipe-item');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.carousel-dot') : [];
+
+    function scrollToIndex(idx) {
+      if (items[idx]) {
+        items[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.getAttribute('data-idx'), 10);
+        scrollToIndex(idx);
+      });
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => track.scrollBy({ left: -track.clientWidth * 0.8, behavior: 'smooth' }));
+    if (nextBtn) nextBtn.addEventListener('click', () => track.scrollBy({ left: track.clientWidth * 0.8, behavior: 'smooth' }));
+
+    let scrollTimeout;
+    track.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const trackRect = track.getBoundingClientRect();
+        const trackCenter = trackRect.left + trackRect.width / 2;
+        let closestIdx = 0;
+        let minDiff = Infinity;
+
+        items.forEach((item, i) => {
+          const itemRect = item.getBoundingClientRect();
+          const itemCenter = itemRect.left + itemRect.width / 2;
+          const diff = Math.abs(trackCenter - itemCenter);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestIdx = i;
+          }
+        });
+
+        dots.forEach((d, i) => d.classList.toggle('active', i === closestIdx));
+      }, 50);
+    }, { passive: true });
+  }
+
+  function playReel(idx) {
+    const item = REELS_DATA[idx];
+    if (item && item.videoSrc) {
+      alert('Playing video reel: ' + item.title);
+    }
+  }
+
+  initSwipeCarousel(
+    'reelsTrack',
+    'reelsDots',
+    'reelsPrevBtn',
+    'reelsNextBtn',
+    (item, index) => `
+      <div class="swipe-item">
+        <div class="reel-card">
+          <div class="reel-video-frame" onclick="playReel(${index})">
+            <img src="${item.poster}" alt="${item.title}">
+            <div class="reel-play-overlay">
+              <div class="reel-play-badge">
+                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </div>
+            </div>
+          </div>
+          <div class="reel-label"><span class="reel-tag">${item.tag}</span> ${item.title}</div>
+        </div>
+      </div>
+    `,
+    REELS_DATA
+  );
+
+  initSwipeCarousel(
+    'installStepsTrack',
+    'stepsDots',
+    'stepsPrevBtn',
+    'stepsNextBtn',
+    (item) => `
+      <div class="swipe-item">
+        <div class="install-card-visual">
+          <div class="install-screen-frame">
+            <img src="${item.imgSrc}" alt="${item.title}">
+          </div>
+          <div class="install-card-meta">
+            <div class="install-step-header">
+              <span class="install-step-tag">${item.step}</span>
+              <h3>${item.title}</h3>
+            </div>
+            <p>${item.desc}</p>
+            ${item.note ? `<div class="install-safe-pill">${item.note}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    `,
+    INSTALL_STEPS_DATA
+  );
+</script>
+
+</body>
+</html>
